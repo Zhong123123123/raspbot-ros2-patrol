@@ -118,7 +118,7 @@ class StatusLedNode(Node):
             self.apply_color(0.0, 0.0, 0.0)
         finally:
             self.cleanup_gpio()
-            return super().destroy_node()
+        return super().destroy_node()
 
 
 def main(args=None):

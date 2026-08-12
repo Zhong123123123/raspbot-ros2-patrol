@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-
 WORKSPACE_ENV = 'RASPBOT_WS'
 _WORKSPACE_MARKERS = ('${RASPBOT_WS}', '$RASPBOT_WS')
 

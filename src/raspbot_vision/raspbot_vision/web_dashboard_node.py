@@ -34,7 +34,6 @@ from rclpy.node import Node
 from sensor_msgs.msg import CompressedImage, Range
 from std_msgs.msg import Bool, String
 
-
 # ---------------------------------------------------------------------------
 #  Shared telemetry state  (written by ROS2 callbacks, read by aiohttp)
 # ---------------------------------------------------------------------------

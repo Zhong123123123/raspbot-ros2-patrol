@@ -137,7 +137,7 @@ def print_table(results, frame_label='synthetic 640x480'):
     col_w = [24, 12, 12, 10, 10, 10, 10]
 
     # Header
-    print('  ' + ''.join(h.ljust(w) for h, w in zip(headers, col_w)))
+    print('  ' + ''.join(h.ljust(w) for h, w in zip(headers, col_w, strict=True)))
     print('  ' + '-' * sum(col_w))
 
     for backend, r in results.items():

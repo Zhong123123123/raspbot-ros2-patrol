@@ -8,11 +8,12 @@
 
 在当前 Windows 工作区中完成了以下只读/离线检查：
 
-- `python -B -m pytest src/raspbot_vision/test -q -p no:cacheprovider`：`117 passed, 2 skipped`。
+- 初始无 OpenCV 环境：`python -B -m pytest src/raspbot_vision/test -q -p no:cacheprovider` 为 `117 passed, 2 skipped`。
+- 安装 CI 使用的 OpenCV 后：`148 passed, 1 skipped`；唯一跳过项依赖 ROS 2 `rclpy`，不应在纯 Python CI 中运行。
 - 68 个 `src/` 与 `tools/` 下的 Python 文件通过 AST 语法解析。
 - 15 个视觉配置 YAML 及 3 个 `package.xml` 可解析。
 
-两项跳过来自当前 Windows Python 环境没有安装 OpenCV；测试使用 `pytest.importorskip("cv2")`，因此它们是明确跳过而不是伪成功。当前环境也没有 `rclpy`、ROS 2、真实相机或硬件，故未运行节点、launch、colcon 构建或实车测试。
+初始的两项跳过来自 Windows Python 环境没有安装 OpenCV；测试使用 `pytest.importorskip("cv2")`，因此它们是明确跳过而不是伪成功。安装 OpenCV 后，依赖 ROS 2 的渲染测试会因缺少 `rclpy` 明确跳过。当前环境仍没有 ROS 2、真实相机或硬件，故未运行节点、launch、colcon 构建或实车测试。
 
 历史测试报告中的 Linux/树莓派结果保留为历史证据，不能与本次 Windows 离线结果混为同一轮测试。
 

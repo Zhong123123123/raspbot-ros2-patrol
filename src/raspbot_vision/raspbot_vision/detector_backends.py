@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Sequence, Tuple
 
 import cv2
 import numpy as np
@@ -80,7 +80,7 @@ class HogPersonDetector(BasePersonDetector):
         )
         frame_area = float(max(1, int(frame.shape[0]) * int(frame.shape[1])))
         detections: List[Detection] = []
-        for rect, weight in zip(rects, weights):
+        for rect, weight in zip(rects, weights, strict=False):
             x, y, w, h = [int(v) for v in rect]
             confidence = float(weight[0] if hasattr(weight, '__len__') else weight)
             if confidence < self.config.hog_min_confidence:
@@ -217,10 +217,10 @@ class YoloV8PersonDetector(BasePersonDetector):
     def _init_onnxruntime(model_path: str):
         try:
             import onnxruntime as ort
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 'onnxruntime not installed; install with: pip install onnxruntime'
-            )
+            ) from exc
         sess_opts = ort.SessionOptions()
         sess_opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
         sess_opts.enable_cpu_mem_arena = True

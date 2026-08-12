@@ -1,5 +1,4 @@
 import json
-import os
 import sqlite3
 from pathlib import Path
 
@@ -238,7 +237,7 @@ class PatrolLoggerNode(Node):
         try:
             self.conn.close()
         finally:
-            return super().destroy_node()
+            super().destroy_node()
 
 
 def main(args=None):

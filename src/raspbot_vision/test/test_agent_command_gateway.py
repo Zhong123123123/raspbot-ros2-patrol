@@ -330,7 +330,7 @@ class TestConstants:
             'direct_cmd_vel', 'shell', 'disable_safety',
             'modify_database', 'stop_obstacle_avoid', 'delete_logs',
         }
-        assert FORBIDDEN_ALWAYS == expected
+        assert expected == FORBIDDEN_ALWAYS
 
     def test_read_only_and_mutating_partition(self):
         """Read-only and mutating actions should be disjoint."""

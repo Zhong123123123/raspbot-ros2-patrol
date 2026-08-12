@@ -9,8 +9,8 @@ No SLAM, no Nav2, no map — pure timed motion on a pre-defined route.
 
 from __future__ import annotations
 
+import json
 import time
-from datetime import datetime, timezone
 from typing import List, Optional
 
 import rclpy
@@ -18,14 +18,13 @@ from geometry_msgs.msg import Twist
 from rclpy.node import Node
 from sensor_msgs.msg import Range
 from std_msgs.msg import Bool, String
+
 from .route_logic import (
     RouteConfigError,
     build_status_json,
     parse_route,
     should_pause_for_obstacle,
-    validate_action,
 )
-
 
 # ---------------------------------------------------------------------------
 #  Node

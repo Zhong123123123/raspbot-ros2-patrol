@@ -176,6 +176,7 @@ class TestShouldPause:
 class TestBuildStatusJson:
     def test_minimal_fields(self):
         import json
+
         from raspbot_vision.route_logic import build_status_json
         s = build_status_json('IDLE', 0, '', '', False, False)
         d = json.loads(s)
@@ -185,6 +186,7 @@ class TestBuildStatusJson:
 
     def test_with_patrol_result(self):
         import json
+
         from raspbot_vision.route_logic import build_status_json
         result = {'final_decision': 'occupied', 'detected': True}
         s = build_status_json('WAIT_PATROL_RESULT', 2, 'scan1', 'patrol',
@@ -195,6 +197,7 @@ class TestBuildStatusJson:
 
     def test_error_state(self):
         import json
+
         from raspbot_vision.route_logic import build_status_json
         s = build_status_json('ERROR', 0, '', '', False, False,
                               error_msg='something broke')
@@ -203,6 +206,7 @@ class TestBuildStatusJson:
 
     def test_done_state(self):
         import json
+
         from raspbot_vision.route_logic import build_status_json
         s = build_status_json('DONE', 6, '', '', True, False)
         d = json.loads(s)
@@ -210,6 +214,7 @@ class TestBuildStatusJson:
 
     def test_blocked_state(self):
         import json
+
         from raspbot_vision.route_logic import build_status_json
         s = build_status_json('OBSTACLE_PAUSED', 2, 'move_1', 'move',
                               False, True)

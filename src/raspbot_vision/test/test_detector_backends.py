@@ -191,8 +191,8 @@ class TestFilterDetections:
 
 class TestPersonDetectionDebugRendering:
     def test_empty_detections_still_draw_status_banner(self):
+        pytest.importorskip("rclpy", reason="ROS 2 runtime dependency is not installed")
         import numpy as np
-
         from raspbot_vision.person_detect_node import render_person_detection_debug_frame
 
         frame = np.zeros((240, 320, 3), dtype=np.uint8)
@@ -207,7 +207,6 @@ class TestHogDetectorFiltering:
     @pytest.mark.skipif(not _HOG_AVAILABLE, reason=_hog_skip_reason)
     def test_hog_filters_low_reliability_boxes(self, default_detector_config):
         import numpy as np
-
         from raspbot_vision.detector_backends import HogPersonDetector
 
         default_detector_config.backend = "hog"

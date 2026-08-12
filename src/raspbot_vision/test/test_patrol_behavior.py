@@ -5,7 +5,6 @@ ROS2 dependencies.  The function decides whether to confirm a patrol result
 based on consecutive entries in the round history deque.
 """
 
-import pytest
 
 from raspbot_vision.patrol_logic import evaluate_round_history
 

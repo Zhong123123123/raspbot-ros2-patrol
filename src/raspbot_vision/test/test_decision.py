@@ -7,7 +7,6 @@ Covers:
   - edge cases:  zero offset, exact dead-zone boundary, rapid flips
 """
 
-import pytest
 
 
 # ============================================================================

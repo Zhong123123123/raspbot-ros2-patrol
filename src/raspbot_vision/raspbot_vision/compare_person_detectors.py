@@ -8,7 +8,6 @@ from .detector_backends import DetectorConfig, create_person_detector
 from .usb_camera import USBCamera
 from .workspace import workspace_path
 
-
 DEFAULT_DEVICE = '/dev/v4l/by-id/usb-Generic_HD_camera_20181212000000-video-index0'
 DEFAULT_MODEL = str(workspace_path('models', 'person_detection', 'frozen_inference_graph.pb'))
 DEFAULT_PBTXT = str(workspace_path('models', 'person_detection', 'ssd_mobilenet_v1_coco_2017_11_17.pbtxt'))

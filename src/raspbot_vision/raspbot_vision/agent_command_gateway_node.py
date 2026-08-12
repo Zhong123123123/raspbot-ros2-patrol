@@ -39,7 +39,6 @@ from .agent_protocol import (
 )
 from .workspace import resolve_workspace_path
 
-
 # ---------------------------------------------------------------------------
 # ROS2 Node
 # ---------------------------------------------------------------------------
@@ -281,13 +280,7 @@ class AgentCommandGatewayNode(Node):
             return
 
         state = data.get('state', '')
-        if state == 'done':
-            self._route_active = False
-            self._active_route_cmd = None
-        elif state == 'error':
-            self._route_active = False
-            self._active_route_cmd = None
-        elif state in ('idle', ''):
+        if state == 'done' or state == 'error' or state in ('idle', ''):
             self._route_active = False
             self._active_route_cmd = None
         else:

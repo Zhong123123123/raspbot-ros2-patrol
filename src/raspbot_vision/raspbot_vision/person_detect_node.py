@@ -1,8 +1,6 @@
 import json
-import os
 import time
 from datetime import datetime, timezone
-from pathlib import Path
 
 import cv2
 import rclpy
@@ -12,8 +10,8 @@ from sensor_msgs.msg import CompressedImage
 from std_msgs.msg import Bool, String
 
 from .detector_backends import DetectorConfig, create_person_detector
-from .workspace import resolve_workspace_path
 from .usb_camera import USBCamera
+from .workspace import resolve_workspace_path
 
 
 def render_person_detection_debug_frame(frame, detections, backend_name='', error_msg=''):

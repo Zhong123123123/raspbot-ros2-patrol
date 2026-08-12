@@ -115,8 +115,8 @@ class TestNoiseRejection:
 class TestParameters:
     def test_different_resolution_handled(self):
         """Detector should handle non-default resolutions correctly."""
-        from raspbot_vision.line_detector import LineDetector
         import numpy as np
+        from raspbot_vision.line_detector import LineDetector
 
         ld = LineDetector()
         # 320×240 frame with a centered black line

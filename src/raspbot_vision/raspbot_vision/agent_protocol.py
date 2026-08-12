@@ -9,7 +9,6 @@ import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
-
 FORBIDDEN_ALWAYS = frozenset({
     'direct_cmd_vel',
     'shell',

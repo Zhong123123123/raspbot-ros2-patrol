@@ -56,7 +56,7 @@ from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from std_msgs.msg import Bool, ColorRGBA, String, UInt16
 
-from .patrol_logic import RoundEntry, evaluate_round_history
+from .patrol_logic import evaluate_round_history
 
 
 class PatrolBehaviorNode(Node):
