@@ -1,0 +1,11 @@
+raspbot_status_led:
+  ros__parameters:
+    enabled: true
+    gpiochip: 0
+    led1_gpio: 21
+    led2_gpio: 20
+    led1_active_high: false
+    led2_active_high: false
+    default_red: 0.0
+    default_green: 0.0
+    default_blue: 0.0

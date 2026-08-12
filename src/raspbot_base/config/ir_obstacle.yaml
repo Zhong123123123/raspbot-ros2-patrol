@@ -1,0 +1,10 @@
+raspbot_ir_obstacle:
+  ros__parameters:
+    gpiochip: 0
+    left_pin: 10
+    right_pin: 9
+    enable_pin: 25
+    sensor_active_low: true
+    enable_active_high: true
+    enable_on_start: true
+    publish_rate: 20.0

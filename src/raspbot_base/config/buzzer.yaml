@@ -1,0 +1,7 @@
+raspbot_buzzer:
+  ros__parameters:
+    gpiochip: 0
+    gpio_pin: 12
+    active_high: true
+    enabled: false
+    default_beep_ms: 80

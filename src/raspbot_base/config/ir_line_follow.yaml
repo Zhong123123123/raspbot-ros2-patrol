@@ -1,0 +1,10 @@
+raspbot_ir_line_follow:
+  ros__parameters:
+    line_topic: line_tracker
+    forward_speed: 0.12
+    turn_angular: 0.7
+    sharp_turn_angular: 1.1
+    search_angular: 0.5
+    lost_timeout: 0.5
+    loop_hz: 20.0
+    enabled: true

@@ -1,0 +1,54 @@
+# ROS 2 / colcon build products
+/build/
+/install/
+/log/
+
+# Python caches, virtual environments and test output
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+pytest-report.xml
+.venv/
+venv/
+
+# Editors and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local runtime artifacts and historical patrol captures
+/data/*
+!/data/README.md
+
+# Model weights are downloaded/exported locally; keep only instructions.
+/models/*
+!/models/README.md
+!/models/person_detection/
+/models/person_detection/*
+!/models/person_detection/README.md
+
+# Local credentials and machine-specific overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*secret*.yaml
+*secret*.yml
+*credentials*.json
+
+# Runtime logs and generated reports outside the data directory
+*.log
+*.jsonl
+patrol_report_*.md
+
+# Empty lock file accidentally created by local OpenClaw/npm setup; this ROS
+# workspace has no root package.json.
+/package-lock.json

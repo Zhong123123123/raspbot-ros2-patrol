@@ -1,0 +1,19 @@
+raspbot_remote_notify:
+  ros__parameters:
+    alert_topic: patrol/alert
+    confirmed_topic: patrol/confirmed_status
+    # Webhook URL — replace with your actual URL
+    webhook_url: ""
+    # Platform: generic / dingtalk / wechat
+    platform: generic
+    # DingTalk secret (only needed when platform=dingtalk)
+    secret: ""
+    # Minimum interval between notifications (seconds)
+    cooldown_sec: 120.0
+    # Retry on failure
+    retry_count: 2
+    retry_delay_sec: 5.0
+    # Set to false to disable notifications
+    enabled: false
+    # Send notification when area is confirmed empty
+    notify_on_empty: false

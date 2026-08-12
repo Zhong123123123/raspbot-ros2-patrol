@@ -1,0 +1,49 @@
+raspbot_patrol_behavior:
+  ros__parameters:
+    # --- topic names ---
+    trigger_topic: patrol/trigger
+    detection_result_topic: person_detection/result
+    detection_trigger_topic: person_detection/trigger
+    gimbal_command_topic: gimbal_cmd
+    final_result_topic: patrol/final_result
+    confirmed_topic: patrol/confirmed_status
+    alert_topic: patrol/alert
+    cmd_vel_topic: cmd_vel
+    status_led_topic: status_led_cmd
+    buzzer_topic: buzzer_beep_ms
+    patrol_active_topic: patrol/active
+
+    # --- gimbal angles ---
+    left_angle: 45.0
+    center_angle: 90.0
+    right_angle: 135.0
+    tilt_angle: 105.0
+
+    # --- timing ---
+    stop_settle_sec: 0.2
+    settle_time_sec: 0.8
+    detection_timeout_sec: 8.0
+    feedback_duration_sec: 1.2
+    busy_reject_warn_sec: 2.0
+
+    # --- round-level decision ---
+    occupied_min_positive_positions: 2
+    occupied_min_confidence: 0.60
+
+    # --- P3: multi-round confirmation ---
+    # Number of consecutive "occupied" rounds needed to confirm
+    confirm_occupied_rounds: 2
+    # Number of consecutive "empty" rounds needed to confirm
+    confirm_empty_rounds: 3
+    # Max entries in round history deque
+    round_history_size: 10
+
+    # --- P3: occupied hold alert ---
+    # How long to keep LED/buzzer after confirmed occupied (0 = off)
+    occupied_hold_sec: 15.0
+    # Buzzer duration during hold (ms, 0 = no beep)
+    occupied_hold_beep_ms: 200
+
+    # --- P3: timeout retry ---
+    # Number of retries per scan position on detection timeout
+    uncertain_retry_count: 1

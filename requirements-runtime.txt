@@ -1,0 +1,7 @@
+# Python packages installed in addition to ROS 2 / apt dependencies.
+numpy>=1.26
+opencv-python-headless>=4.8,<5  # OpenCV 5 removed HOGDescriptor
+onnxruntime
+aiohttp
+jinja2
+PyYAML

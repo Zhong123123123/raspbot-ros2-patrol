@@ -1,0 +1,9 @@
+raspbot_voice_announce:
+  ros__parameters:
+    alert_topic: patrol/alert
+    confirmed_topic: patrol/confirmed_status
+    cooldown_sec: 30.0
+    speed: 150
+    volume: 100
+    voice: en
+    enabled: true

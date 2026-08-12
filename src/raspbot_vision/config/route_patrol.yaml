@@ -1,0 +1,35 @@
+raspbot_route_patrol:
+  ros__parameters:
+    enabled: true
+    auto_start: false
+    loop_route: false
+
+    cmd_vel_topic: "cmd_vel"
+    patrol_trigger_topic: "patrol/trigger"
+    patrol_result_topic: "patrol/final_result"
+    patrol_active_topic: "patrol/active"
+    ultrasonic_topic: "ultrasonic/front"
+    status_topic: "route_patrol/status"
+
+    publish_rate_hz: 10.0
+    stop_repeat_count: 5
+    stop_settle_sec: 0.8
+
+    default_linear_x: 0.06
+    default_angular_z: 0.30
+
+    obstacle_check_enabled: true
+    obstacle_stop_distance_m: 0.25
+    obstacle_resume_distance_m: 0.35
+
+    patrol_timeout_sec: 45.0
+
+    route:
+      - '{"name":"start_scan","action":"patrol"}'
+      - '{"name":"move_to_point_1","action":"move","linear_x":0.06,"duration_sec":1.5}'
+      - '{"name":"point_1_scan","action":"patrol"}'
+      - '{"name":"turn_right","action":"turn","angular_z":-0.30,"duration_sec":0.9}'
+      - '{"name":"move_to_point_2","action":"move","linear_x":0.06,"duration_sec":1.5}'
+      - '{"name":"point_2_scan","action":"patrol"}'
+      - '{"name":"wait_demo","action":"wait","duration_sec":1.0}'
+      - '{"name":"final_stop","action":"stop"}'

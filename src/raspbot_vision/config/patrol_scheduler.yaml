@@ -1,0 +1,7 @@
+raspbot_patrol_scheduler:
+  ros__parameters:
+    enabled: true
+    interval_sec: 10.0
+    active_start: '00:00'
+    active_end: '23:59'
+    publish_enabled_heartbeat_sec: 5.0

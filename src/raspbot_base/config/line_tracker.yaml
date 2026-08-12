@@ -1,0 +1,6 @@
+raspbot_line_tracker:
+  ros__parameters:
+    gpiochip: 0
+    sensor_pins: [17, 4, 27, 22]
+    active_low: true
+    publish_rate: 20.0

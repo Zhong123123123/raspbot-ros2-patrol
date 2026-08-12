@@ -1,0 +1,13 @@
+raspbot_obstacle_avoid:
+  ros__parameters:
+    range_topic: ultrasonic/front
+    stop_distance: 0.18
+    clear_distance: 0.26
+    reverse_speed: -0.10
+    reverse_time: 0.35
+    turn_angular: 1.1
+    turn_time: 0.55
+    hold_stop: true
+    clear_confirm_count: 3
+    turn_direction_mode: alternate
+    enabled: true

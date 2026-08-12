@@ -1,0 +1,21 @@
+raspbot_ir_obstacle_avoid:
+  ros__parameters:
+    obstacle_topic: ir_obstacle
+    ultrasonic_override_topic: safety_override_active
+    enabled: true
+    left_enabled: false
+    right_enabled: true
+    left_detect_value: 1
+    right_detect_value: 1
+    reverse_speed: -0.08
+    reverse_time: 0.20
+    turn_angular: 1.0
+    turn_time: 0.35
+    forward_speed: 0.08
+    forward_time: 0.18
+    hold_stop: true
+    clear_confirm_count: 3
+    publish_rate: 20.0
+    prefer_turn: alternate
+
+    startup_grace_sec: 1.5

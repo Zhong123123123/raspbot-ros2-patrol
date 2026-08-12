@@ -1,0 +1,16 @@
+raspbot_gimbal_servo:
+  ros__parameters:
+    i2c_address: 22
+    i2c_bus: 1
+    pan_servo_id: 1
+    tilt_servo_id: 2
+    default_pan: 90
+    default_tilt: 105
+    min_angle: 0
+    max_angle: 180
+    command_topic: gimbal_cmd
+    state_topic: gimbal_joint_states
+    joint_names:
+      - gimbal_pan_joint
+      - gimbal_tilt_joint
+    publish_rate: 5.0

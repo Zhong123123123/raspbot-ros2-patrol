@@ -1,0 +1,5 @@
+raspbot_patrol_logger:
+  ros__parameters:
+    db_path: $RASPBOT_WS/data/patrol/patrol_events.db
+    log_only_on_change: true
+    minimum_log_interval_sec: 30.0

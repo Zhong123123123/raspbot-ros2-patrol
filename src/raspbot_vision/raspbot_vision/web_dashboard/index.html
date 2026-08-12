@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raspbot Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #181b24;
+    --border: #2a2d3a;
+    --text: #c9cdd4;
+    --text-dim: #6b7080;
+    --accent: #4f8fff;
+    --danger: #ff4d5a;
+    --warn: #ffa940;
+    --ok: #3dd68c;
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Mono', 'JetBrains Mono', 'Consolas', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ─────────────────────────────── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px; border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+  .header h1 span { color: var(--accent); }
+  .status-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ok); margin-right: 6px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .status-dot.disconnected { background: var(--danger); animation: none; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* ── Main grid ──────────────────────────── */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── Camera panel ───────────────────────── */
+  .camera-panel {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 16px; min-height: 360px;
+    background: #000;
+    position: relative;
+  }
+  .camera-panel img {
+    max-width: 100%; max-height: 70vh;
+    border-radius: var(--radius);
+  }
+  .camera-label {
+    position: absolute; top: 24px; left: 24px;
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-dim); background: rgba(0,0,0,.6); padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .camera-no-signal {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    color: var(--text-dim);
+  }
+  .camera-no-signal .icon { font-size: 3rem; opacity: .5; }
+
+  /* ── Sidebar ────────────────────────────── */
+  .sidebar {
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    padding: 16px;
+    display: flex; flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  /* ── Card ───────────────────────────────── */
+  .card {
+    background: #202331;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+  }
+  .card-title {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-dim); margin-bottom: 10px;
+  }
+
+  /* ── Gauges ─────────────────────────────── */
+  .gauge-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 0;
+  }
+  .gauge-label { font-size: 0.78rem; color: var(--text-dim); width: 80px; }
+  .gauge-bar-bg {
+    flex: 1; height: 6px; background: #2a2d3a; border-radius: 3px;
+    margin: 0 10px; overflow: hidden;
+  }
+  .gauge-bar-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+  .gauge-value { font-size: 0.85rem; font-weight: 600; min-width: 62px; text-align: right; }
+
+  /* ── Controls (D-pad) ───────────────────── */
+  .dpad {
+    display: grid;
+    grid-template-areas:
+      ". up ."
+      "left center right"
+      ". down .";
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 260px; margin: 0 auto;
+  }
+  .dpad-btn {
+    aspect-ratio: 1; min-height: 52px;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: #202331; color: var(--text); font-size: 1.2rem;
+    cursor: pointer; transition: all .12s;
+    display: flex; align-items: center; justify-content: center;
+    user-select: none; -webkit-user-select: none;
+  }
+  .dpad-btn:active { background: var(--accent); border-color: var(--accent); transform: scale(.95); }
+  .dpad-btn.stop-btn { background: #3d1f22; border-color: #5a2a2f; color: var(--danger); font-weight: 700; font-size: .75rem; }
+  .dpad-btn.stop-btn:active { background: var(--danger); color: #fff; }
+  .dpad-up { grid-area: up; }
+  .dpad-down { grid-area: down; }
+  .dpad-left { grid-area: left; }
+  .dpad-right { grid-area: right; }
+  .dpad-center { grid-area: center; }
+
+  /* ── Status chips ───────────────────────── */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 0.7rem; padding: 5px 12px; border-radius: 20px;
+    border: 1px solid var(--border); white-space: nowrap;
+    transition: all .3s;
+  }
+  .chip.on-person { background: #3d1f22; border-color: var(--danger); color: var(--danger); }
+  .chip.on-patrol { background: #1f2f3d; border-color: var(--accent); color: var(--accent); }
+  .chip.on-safe { background: #2d2a1f; border-color: var(--warn); color: var(--warn); }
+  .chip.off { color: var(--text-dim); }
+
+  /* ── Alert banner ────────────────────────── */
+  .alert-banner {
+    display: none; position: absolute; top: 0; left: 0; right: 0;
+    padding: 12px 16px; text-align: center; font-weight: 700;
+    font-size: 0.9rem; letter-spacing: 0.05em;
+    background: var(--danger); color: #fff;
+    animation: alert-pulse 1.2s ease-in-out infinite;
+    z-index: 10;
+  }
+  .alert-banner.active { display: block; }
+  @keyframes alert-pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+
+  /* ── Confirmed status ────────────────────── */
+  .status-confirmed {
+    font-size: 0.7rem; padding: 4px 10px; border-radius: 4px;
+    border: 1px solid var(--border); display: inline-flex;
+    align-items: center; gap: 6px; margin-top: 8px;
+  }
+  .status-confirmed .dot {
+    width: 6px; height: 6px; border-radius: 50%; display: inline-block;
+  }
+  .status-confirmed .dot.green { background: var(--ok); }
+  .status-confirmed .dot.red { background: var(--danger); }
+  .status-confirmed .dot.grey { background: var(--text-dim); }
+
+  /* ── Responsive ─────────────────────────── */
+  @media (max-width: 860px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { border-left: none; border-top: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────── -->
+<div class="header">
+  <h1>🤖 Raspbot<span> Dashboard</span></h1>
+  <div>
+    <span id="ws-indicator" class="status-dot disconnected"></span>
+    <span id="ws-text" style="font-size:.75rem;color:var(--text-dim)">disconnected</span>
+  </div>
+</div>
+
+<!-- ── Main Content ─────────────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- Camera -->
+  <div class="camera-panel" id="camera-panel">
+    <div class="alert-banner" id="alert-banner">⚠️ ALERT — OCCUPIED</div>
+    <span class="camera-label" id="camera-source">NO SIGNAL</span>
+    <img id="camera-feed" src="/camera" alt="Camera feed"
+         onerror="this.style.display='none';document.getElementById('no-signal').style.display='flex'"
+         onload="this.style.display='block';document.getElementById('no-signal').style.display='none'">
+    <div id="no-signal" class="camera-no-signal">
+      <span class="icon">📷</span>
+      <span style="font-size:.8rem">Waiting for camera topic...</span>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <!-- Sensors -->
+    <div class="card">
+      <div class="card-title">📡 Sensors</div>
+      <div class="gauge-row">
+        <span class="gauge-label">Ultrasonic</span>
+        <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="ultrasonic-bar" style="width:0%;background:var(--accent)"></div></div>
+        <span class="gauge-value" id="ultrasonic-val">-- m</span>
+      </div>
+      <div class="gauge-row">
+        <span class="gauge-label">Speed</span>
+        <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="speed-bar" style="width:0%;background:var(--ok)"></div></div>
+        <span class="gauge-value" id="speed-val">0.00 m/s</span>
+      </div>
+      <div class="gauge-row">
+        <span class="gauge-label">Angular</span>
+        <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="angular-bar" style="width:0%;background:var(--warn)"></div></div>
+        <span class="gauge-value" id="angular-val">0.00 rad/s</span>
+      </div>
+      <div class="gauge-row" style="margin-top:6px;font-size:.65rem;color:var(--text-dim)">
+        <span>Camera age: <strong id="cam-age" style="color:var(--text)">--</strong></span>
+        <span>Source: <strong id="cam-topic" style="color:var(--text)">--</strong></span>
+      </div>
+      <div class="gauge-row" style="margin-top:6px;font-size:.65rem;color:var(--text-dim)">
+        <span>Detector: <strong id="detector-backend" style="color:var(--text)">--</strong></span>
+        <span>Mode: <strong id="detector-mode" style="color:var(--text)">--</strong></span>
+      </div>
+      <div class="gauge-row" style="margin-top:6px;font-size:.65rem;color:var(--text-dim)">
+        <span>Rotation: <strong id="detector-rotation" style="color:var(--text)">--</strong></span>
+        <span id="detector-rotation-note" style="color:var(--warn)">--</span>
+      </div>
+      <div class="gauge-row" style="margin-top:6px;font-size:.65rem;color:var(--text-dim)">
+        <span>Reason: <strong id="detector-reason" style="color:var(--text)">--</strong></span>
+        <span>Fallback: <strong id="detector-fallback" style="color:var(--text)">--</strong></span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="card">
+      <div class="card-title">🎮 Controls <span style="font-weight:400;color:var(--text-dim);font-size:.6rem">(keyboard: WASD / arrows)</span></div>
+      <div class="dpad" id="dpad">
+        <button class="dpad-btn dpad-up"    data-action="forward">▲</button>
+        <button class="dpad-btn dpad-left"  data-action="left">◀</button>
+        <button class="dpad-btn dpad-center stop-btn" data-action="stop">STOP</button>
+        <button class="dpad-btn dpad-right" data-action="right">▶</button>
+        <button class="dpad-btn dpad-down"  data-action="back">▼</button>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="card">
+      <div class="card-title">🔔 Status</div>
+      <div class="chip-row">
+        <span class="chip off" id="chip-person">🧑 Person</span>
+        <span class="chip off" id="chip-patrol">🔄 Patrol</span>
+        <span class="chip off" id="chip-safety">🛡️ Safety</span>
+      </div>
+      <div class="status-confirmed" id="status-confirmed">
+        <span class="dot grey" id="confirmed-dot"></span>
+        <span id="confirmed-text">Monitoring...</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── WebSocket connection ──────────────────────────────────────────────
+const WS_URL = `ws://${location.host}/ws`;
+let ws = null;
+let reconnectTimer = null;
+let controlEnabled = false;
+const dashboardToken = new URLSearchParams(window.location.search).get('token') || '';
+
+function connect() {
+  if (ws && ws.readyState === WebSocket.OPEN) return;
+  ws = new WebSocket(WS_URL);
+
+  ws.onopen = () => {
+    document.getElementById('ws-indicator').classList.remove('disconnected');
+    document.getElementById('ws-text').textContent = 'connected';
+    if (reconnectTimer) { clearInterval(reconnectTimer); reconnectTimer = null; }
+  };
+
+  ws.onclose = () => {
+    document.getElementById('ws-indicator').classList.add('disconnected');
+    document.getElementById('ws-text').textContent = 'reconnecting...';
+    if (!reconnectTimer) reconnectTimer = setInterval(connect, 2000);
+  };
+
+  ws.onmessage = (evt) => {
+    try {
+      const msg = JSON.parse(evt.data);
+      if (msg.type === 'telemetry') updateUI(msg);
+    } catch(e) {}
+  };
+}
+
+// ── Send control command ──────────────────────────────────────────────
+function sendControl(action) {
+  if (!controlEnabled || !ws || ws.readyState !== WebSocket.OPEN) return;
+  ws.send(JSON.stringify({ type: 'control', action, token: dashboardToken }));
+}
+
+// ── D-pad buttons ─────────────────────────────────────────────────────
+document.querySelectorAll('.dpad-btn').forEach(btn => {
+  btn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    sendControl(btn.dataset.action);
+  });
+  btn.addEventListener('pointerup', (e) => {
+    e.preventDefault();
+    // On release, send stop for safety (except the STOP btn itself)
+    if (btn.dataset.action !== 'stop') sendControl('stop');
+  });
+  btn.addEventListener('pointerleave', (e) => {
+    if (btn.dataset.action !== 'stop') sendControl('stop');
+  });
+  // Prevent text selection / drag on buttons
+  btn.addEventListener('dragstart', e => e.preventDefault());
+});
+
+// ── Keyboard controls ─────────────────────────────────────────────────
+const keyMap = {
+  'w': 'forward', 'ArrowUp': 'forward',
+  's': 'back',    'ArrowDown': 'back',
+  'a': 'left',    'ArrowLeft': 'left',
+  'd': 'right',   'ArrowRight': 'right',
+  'x': 'stop',    ' ': 'stop',
+};
+const activeKeys = new Set();
+
+window.addEventListener('keydown', (e) => {
+  const action = keyMap[e.key];
+  if (!action || activeKeys.has(e.key)) return;
+  e.preventDefault();
+  activeKeys.add(e.key);
+  sendControl(action);
+});
+
+window.addEventListener('keyup', (e) => {
+  const action = keyMap[e.key];
+  if (!action) return;
+  e.preventDefault();
+  activeKeys.delete(e.key);
+  sendControl('stop');
+});
+
+// ── UI updates ────────────────────────────────────────────────────────
+function updateUI(data) {
+  controlEnabled = Boolean(data.control_enabled);
+  // Ultrasonic gauge (0 .. max_range → 0% .. 100%)
+  const usBar = document.getElementById('ultrasonic-bar');
+  const usVal = document.getElementById('ultrasonic-val');
+  const maxR = data.ultrasonic_max || 2.5;
+  const range = data.ultrasonic_range;
+  if (isFinite(range) && range > 0) {
+    const pct = Math.min(100, (range / maxR) * 100);
+    usBar.style.width = pct + '%';
+    usVal.textContent = range.toFixed(2) + ' m';
+    // Color: red when close, yellow mid, green far
+    if (range < 0.3) usBar.style.background = 'var(--danger)';
+    else if (range < 0.6) usBar.style.background = 'var(--warn)';
+    else usBar.style.background = 'var(--accent)';
+  } else {
+    usBar.style.width = '0%';
+    usVal.textContent = '∞ m';
+  }
+
+  // Speed gauge (±0.5 m/s range)
+  const speedBar = document.getElementById('speed-bar');
+  const speedVal = document.getElementById('speed-val');
+  const linX = data.linear_x || 0;
+  const speedPct = Math.min(100, Math.abs(linX) / 0.3 * 50);
+  speedBar.style.width = speedPct + '%';
+  speedVal.textContent = linX.toFixed(2) + ' m/s';
+  speedBar.style.background = linX >= 0 ? 'var(--ok)' : 'var(--warn)';
+
+  // Angular gauge (±1.5 rad/s range)
+  const angBar = document.getElementById('angular-bar');
+  const angVal = document.getElementById('angular-val');
+  const angZ = data.angular_z || 0;
+  const angPct = Math.min(100, Math.abs(angZ) / 1.0 * 50);
+  angBar.style.width = angPct + '%';
+  angVal.textContent = angZ.toFixed(2) + ' rad/s';
+  angBar.style.background = 'var(--warn)';
+
+  // Status chips
+  function setChip(id, on, onClass) {
+    const el = document.getElementById(id);
+    el.className = 'chip ' + (on ? onClass : 'off');
+  }
+  setChip('chip-person', data.person_detected, 'on-person');
+  setChip('chip-patrol', data.patrol_active, 'on-patrol');
+  setChip('chip-safety', data.safety_override_active, 'on-safe');
+
+  // Camera info
+  document.getElementById('cam-age').textContent =
+    data.camera_age_ms != null ? data.camera_age_ms + 'ms' : '--';
+  document.getElementById('cam-topic').textContent = data.camera_topic || '--';
+  document.getElementById('camera-source').textContent =
+    (data.camera_topic || 'NO SIGNAL').toUpperCase();
+
+  const activeDetector = data.person_backend_active || data.detector_backend || '--';
+  const requestedDetector = data.person_backend_requested || '--';
+  const detectorFallback = data.person_backend_is_fallback ? `fallback from ${requestedDetector}` : 'primary';
+  const rotationDeg = Number.isFinite(data.person_frame_rotate_deg) ? data.person_frame_rotate_deg : Number(data.frame_rotate_deg || 0);
+  const rotationLabel = `${rotationDeg}°`;
+  const rotationNote = rotationDeg === 270 ? 'required for this camera mount' : (rotationDeg === 0 ? 'raw orientation' : 'check mount direction');
+  document.getElementById('detector-backend').textContent = activeDetector;
+  document.getElementById('detector-mode').textContent = detectorFallback;
+  document.getElementById('detector-rotation').textContent = rotationLabel;
+  document.getElementById('detector-rotation-note').textContent = rotationNote;
+  document.getElementById('detector-reason').textContent = data.person_decision_reason || data.decision_reason || '--';
+  document.getElementById('detector-fallback').textContent = data.person_backend_fallback_reason || '--';
+
+  // Patrol confirmed status
+  const confDecision = data.patrol_confirmed_decision || 'none';
+  const confEl = document.getElementById('status-confirmed');
+  const dotEl = document.getElementById('confirmed-dot');
+  const textEl = document.getElementById('confirmed-text');
+  if (confDecision === 'occupied') {
+    dotEl.className = 'dot red';
+    textEl.textContent = '✅ Confirmed: OCCUPIED';
+    confEl.style.borderColor = 'var(--danger)';
+  } else if (confDecision === 'empty') {
+    dotEl.className = 'dot green';
+    textEl.textContent = '⭕ Confirmed: empty';
+    confEl.style.borderColor = 'var(--ok)';
+  } else {
+    dotEl.className = 'dot grey';
+    textEl.textContent = '◌ Monitoring...';
+    confEl.style.borderColor = 'var(--border)';
+  }
+
+  // Alert banner
+  const alertEl = document.getElementById('alert-banner');
+  if (data.patrol_alert) {
+    alertEl.classList.add('active');
+  } else {
+    alertEl.classList.remove('active');
+  }
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────
+connect();
+// Reconnect more aggressively at first, then back off
+setTimeout(() => { if (!ws || ws.readyState !== WebSocket.OPEN) connect(); }, 1000);
+</script>
+</body>
+</html>

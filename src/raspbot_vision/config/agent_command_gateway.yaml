@@ -1,0 +1,69 @@
+agent_command_gateway:
+  ros__parameters:
+    # --- Topic names ---
+    agent_command_topic: "/agent/command"
+    agent_result_topic: "/agent/command_result"
+
+    patrol_trigger_topic: "/patrol/trigger"
+    patrol_result_topic: "/patrol/final_result"
+    patrol_status_topic: "/patrol/confirmed_status"
+    patrol_alert_topic: "/patrol/alert"
+    patrol_active_topic: "/patrol/active"
+
+    # NOTE: route_patrol_node uses hardcoded topic names (not parameters):
+    #   - subscribes to route_patrol/start (Bool)
+    #   - subscribes to route_patrol/stop  (Bool)
+    #   - publishes  route_patrol/status (String)
+    route_start_topic: "route_patrol/start"
+    route_stop_topic: "route_patrol/stop"
+    route_status_topic: "route_patrol/status"
+
+    ultrasonic_topic: "/ultrasonic/front"
+
+    # --- Safety: allowed and forbidden actions ---
+    allowed_actions:
+      - query_status
+      - query_latest_patrol
+      - generate_report
+      - trigger_patrol_once
+      - run_route
+      - stop_route
+      - pause_route
+      - get_dashboard_url
+      - systemd_status
+
+    forbidden_actions:
+      - direct_cmd_vel
+      - shell
+      - disable_safety
+      - modify_database
+      - stop_obstacle_avoid
+      - delete_logs
+
+    # --- Route whitelist ---
+    whitelist_routes:
+      - short_test_route
+      - door_check_route
+      - desk_check_route
+      - office_demo_route
+
+    # --- Safety parameters ---
+    require_confirmation_for_routes: true
+    max_route_duration_sec: 120.0
+    ultrasonic_timeout_sec: 2.0
+    min_obstacle_distance_m: 0.30
+    patrol_timeout_sec: 30.0
+    # route_patrol_node currently executes this one configured route.  Other
+    # allowed names are recorded as requests; the gateway reports this value
+    # as the route actually executed.
+    configured_route_name: short_test_route
+
+    reject_if_obstacle_too_close: true
+    reject_if_patrol_active: true
+    reject_if_route_active: true
+
+    # --- Infrastructure ---
+    dashboard_url: "http://raspberrypi.local:8080"
+
+    log_agent_commands: true
+    agent_log_path: "$RASPBOT_WS/data/agent/agent_commands.jsonl"

@@ -1,0 +1,10 @@
+raspbot_hardware_alert:
+  ros__parameters:
+    idle_red: 0.0
+    idle_green: 0.0
+    idle_blue: 1.0
+    alert_red: 1.0
+    alert_green: 0.0
+    alert_blue: 0.0
+    beep_on_alert: false
+    beep_ms: 60

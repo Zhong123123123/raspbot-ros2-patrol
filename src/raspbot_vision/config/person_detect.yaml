@@ -1,0 +1,53 @@
+raspbot_person_detect:
+  ros__parameters:
+    camera_device: /dev/v4l/by-id/usb-Generic_HD_camera_20181212000000-video-index0
+    width: 640
+    height: 480
+    fps: 15
+    loop_hz: 2.0
+    publish_debug: true
+    default_enabled: true
+    continuous_mode: false
+    # Default priority: YOLOv8 ONNX -> OpenCV DNN TF-SSD -> HOG fallback
+    detector_backend: yolov8_onnx
+    detector_fallback_backend: opencv_dnn_tf_ssd
+    frame_rotate_deg: 270
+    hog_scale: 1.05
+    hog_stride: 8
+    hog_padding: 8
+    hog_min_confidence: 0.70
+    hog_min_box_area_ratio: 0.02
+    hog_min_aspect_ratio: 1.30
+    hog_valid_as_confirmed_backend: false
+    mean_shift_grouping: false
+    min_weight: 0.50
+    min_area: 2000
+    dnn_model_path: $RASPBOT_WS/models/person_detection/yolov8n.onnx
+    dnn_config_path: ''
+    dnn_input_width: 416
+    dnn_input_height: 416
+    dnn_scale: 0.0039216
+    dnn_mean: 0.0
+    dnn_swap_rb: false
+    dnn_person_class_id: 0
+    dnn_confidence_threshold: 0.45
+    # YOLOv8 ONNX settings (used when detector_backend: yolov8_onnx)
+    yolov8_input_size: 416
+    yolov8_confidence_threshold: 0.45
+    yolov8_nms_threshold: 0.50
+    yolov8_use_onnxruntime: true
+    yolov8_use_opencv_dnn: false
+    frame_read_retries: 3
+    camera_reopen_after_failures: 2
+    detect_on_frames: 1
+    detect_off_frames: 3
+    min_detect_hold_sec: 2.0
+    trigger_scan_frames: 3
+    trigger_scan_interval_sec: 0.10
+    trigger_scan_min_positive_frames: 2
+    trigger_scan_strong_confidence: 0.80
+    clear_after_no_detection_sec: 45.0
+    save_images: true
+    save_raw_images: true
+    save_debug_images: true
+    image_root_dir: $RASPBOT_WS/data/patrol/images
